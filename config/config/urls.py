@@ -25,6 +25,6 @@ schema_view = get_swagger_view(title='Test Task VK  API', url='/')\
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('vkapi.urls')),
-    path('api/doc', schema_view),
+    # path('api/doc', schema_view),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
