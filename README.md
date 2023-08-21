@@ -29,38 +29,30 @@ ORDER BY
 ```
 
 
-Postgresql
+Mysql
 
 ```sql
 SELECT
-    subquery.id,
-    subquery.name,
-    subquery.category,
-    STRING_AGG(subquery.product, ', ' ORDER BY subquery.product ASC) AS Products
-FROM (
-    SELECT
-        clients.id,
-        CONCAT(clients.first_name, ' ', clients.last_name) AS Name,
-        orders.category AS Category,
-        orders.product
-    FROM
-        clients
-    JOIN
-        client_orders ON clients.id = client_orders.client_id
-    JOIN
-        orders ON client_orders.order_id = orders.id
-    WHERE
-        clients.age BETWEEN 18 AND 65
-    GROUP BY
-        clients.id, clients.first_name, clients.last_name, orders.category, orders.product
-    HAVING
-        COUNT(DISTINCT orders.product) = 2
-        AND COUNT(DISTINCT orders.category) = 1
-) AS subquery
+    clients.id,
+    CONCAT(clients.first_name, ' ', clients.last_name) AS Name,
+    orders.category AS Category,
+    GROUP_CONCAT(DISTINCT orders.product ORDER BY orders.product ASC SEPARATOR ', ') AS Products
+FROM
+    clients
+JOIN
+    client_orders ON clients.id = client_orders.client_id
+JOIN
+    orders ON client_orders.order_id = orders.id
+WHERE
+    clients.age BETWEEN 18 AND 65
 GROUP BY
-    subquery.id, subquery.name, subquery.category
+    clients.id, clients.first_name, clients.last_name, orders.category
+HAVING
+    COUNT(DISTINCT orders.product) = 2
+    AND COUNT(DISTINCT orders.category) = 1
 ORDER BY
-    subquery.id;
+    clients.id;
+
 
 ```
 # Second task
