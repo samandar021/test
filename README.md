@@ -27,6 +27,42 @@ ORDER BY
     clients.id;
 
 ```
+
+
+Postgresql
+
+```sql
+SELECT
+    subquery.id,
+    subquery.name,
+    subquery.category,
+    STRING_AGG(subquery.product, ', ' ORDER BY subquery.product ASC) AS Products
+FROM (
+    SELECT
+        clients.id,
+        CONCAT(clients.first_name, ' ', clients.last_name) AS Name,
+        orders.category AS Category,
+        orders.product
+    FROM
+        clients
+    JOIN
+        client_orders ON clients.id = client_orders.client_id
+    JOIN
+        orders ON client_orders.order_id = orders.id
+    WHERE
+        clients.age BETWEEN 18 AND 65
+    GROUP BY
+        clients.id, clients.first_name, clients.last_name, orders.category, orders.product
+    HAVING
+        COUNT(DISTINCT orders.product) = 2
+        AND COUNT(DISTINCT orders.category) = 1
+) AS subquery
+GROUP BY
+    subquery.id, subquery.name, subquery.category
+ORDER BY
+    subquery.id;
+
+```
 # Second task
 ## API Endpoints
 
